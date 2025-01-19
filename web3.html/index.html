@@ -1,0 +1,2865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- 添加 viewport meta 标签 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>WEB3 Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background-color: #0a0a0f;
+            color: #ffffff;
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('./images/background.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            filter: blur(8px) brightness(0.7);
+            opacity: 0.3;
+            z-index: -1;
+            box-shadow: inset 0 0 100px rgba(255, 0, 255, 0.2),
+                        inset 0 0 200px rgba(0, 255, 255, 0.1);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        nav {
+            position: fixed;
+            bottom: 30px;
+            left: 40%;
+            transform: translateX(-50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px 40px;
+            background: rgba(20, 20, 30, 0.7);
+            backdrop-filter: blur(20px);
+            border-radius: 100px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            z-index: 1000;
+        }
+
+        .logo {
+            display: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-links a {
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 12px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+            border-radius: 50px;
+        }
+
+        .nav-links a:hover {
+            color: #ffffff;
+            transform: translateY(-2px);
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        .nav-links a:hover::before {
+            opacity: 1;
+        }
+
+        .nav-links a.active {
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .nav-links a i {
+            font-size: 20px;
+        }
+
+        .nav-links a span {
+            position: absolute;
+            bottom: 120%;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            opacity: 0;
+            visibility: hidden;
+            background: rgba(20, 20, 30, 0.9);
+            padding: 8px 15px;
+            border-radius: 15px;
+            font-size: 14px;
+            white-space: nowrap;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-links a span::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-top: 6px solid rgba(20, 20, 30, 0.9);
+        }
+
+        .nav-links a:hover span {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .nav-links a {
+            padding: 12px;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .nav-links a i {
+            font-size: 20px;
+            margin: 0;
+        }
+
+        /* 添加动画效果 */
+        @keyframes navFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        nav {
+            animation: navFadeIn 0.5s ease forwards;
+        }
+
+        .hero {
+            position: relative;
+            min-height: 90vh;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            padding: 6rem 0;
+        }
+
+        .hero-content {
+            text-align: left;
+        }
+
+        .hero-image {
+            position: relative;
+            height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hero-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 20px;
+            filter: drop-shadow(0 0 20px rgba(255, 0, 255, 0.3))
+                   drop-shadow(0 0 40px rgba(0, 255, 255, 0.2));
+            transition: filter 0.3s ease;
+        }
+
+        .hero-image img:hover {
+            filter: drop-shadow(0 0 25px rgba(255, 0, 255, 0.4))
+                   drop-shadow(0 0 50px rgba(0, 255, 255, 0.3));
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: #cccccc;
+            margin-bottom: 40px;
+        }
+
+        .cta-button {
+            padding: 15px 40px;
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            border: none;
+            border-radius: 25px;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .cta-button:hover {
+            transform: scale(1.05);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin: 4rem 0;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, rgba(255, 0, 255, 0.1), rgba(0, 255, 255, 0.1));
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .feature-card h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #ff00ff;
+        }
+
+        .feature-card p {
+            color: #cccccc;
+            line-height: 1.6;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .floating-element {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        /* 为社交媒体图标添加特殊的悬浮效果 */
+        .nav-links a[href*="twitter"]:hover::before {
+            background: linear-gradient(45deg, #1DA1F2, #14171A);
+            opacity: 1;
+        }
+
+        .nav-links a[href*="telegram"]:hover::before {
+            background: linear-gradient(45deg, #0088cc, #0077B5);
+            opacity: 1;
+        }
+
+        /* 添加社交媒体下拉菜单样式 */
+        .contact-dropdown {
+            position: relative;
+        }
+
+        .social-links {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background: rgba(20, 20, 30, 0.9);
+            backdrop-filter: blur(20px);
+            padding: 15px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .social-links::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 8px solid rgba(20, 20, 30, 0.9);
+        }
+
+        .contact-dropdown.active .social-links {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .social-links a {
+            white-space: nowrap;
+            min-width: 120px;
+            padding: 10px 20px;
+            justify-content: center;
+        }
+
+        /* 语言切换按钮样式 */
+        .language-dropdown {
+            position: relative;
+        }
+
+        .language-btn i {
+            font-size: 20px;
+        }
+
+        .language-options {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* 两列布局 */
+            gap: 8px;
+            background: rgba(20, 20, 30, 0.9);
+            backdrop-filter: blur(20px);
+            padding: 15px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            min-width: 200px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .language-dropdown.active .language-options {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .language-options a {
+            text-align: center;
+            white-space: nowrap;
+            padding: 10px 20px;
+            justify-content: center;
+        }
+
+        .language-options a.active {
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+        }
+
+        /* 修改LOGO样式 */
+        .site-logo {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            width: 60px;
+            height: 60px;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            padding: 10px;
+            background: rgba(20, 20, 30, 0.7);
+            backdrop-filter: blur(20px);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .site-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 0 10px rgba(255, 0, 255, 0.3))
+                   drop-shadow(0 0 20px rgba(0, 255, 255, 0.2));
+            transition: filter 0.3s ease;
+        }
+
+        .site-logo:hover img {
+            filter: drop-shadow(0 0 15px rgba(255, 0, 255, 0.4))
+                   drop-shadow(0 0 30px rgba(0, 255, 255, 0.3));
+        }
+
+        /* 特殊处理下拉菜单中的文字 */
+        .social-links a span,
+        .language-options a span {
+            position: static;
+            opacity: 1;
+            visibility: visible;
+            background: none;
+            padding: 0;
+            transform: none;
+            border: none;
+            backdrop-filter: none;
+        }
+
+        .social-links a,
+        .language-options a {
+            width: auto;
+            height: auto;
+            padding: 10px 20px;
+        }
+
+        /* 调整下拉菜单的箭头位置 */
+        .social-links::after,
+        .language-options::after {
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* 新增样式 */
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #ffffff;
+        }
+
+        .gradient-text {
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .highlights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .highlight-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .highlight-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .highlight-item i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .game-features, .business-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .game-feature-card, .business-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease;
+        }
+
+        .game-feature-card:hover, .business-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .business-card ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 1rem;
+        }
+
+        .business-card ul li {
+            margin: 0.5rem 0;
+            color: #cccccc;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .benefit-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .benefit-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .innovation-section,
+        .game-section,
+        .business-section,
+        .shareholder-section {
+            padding: 5rem 0;
+        }
+
+        .game-section {
+            position: relative;
+            padding: 6rem 0;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 30px;
+            margin: 4rem 0;
+        }
+
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+            padding: 2rem;
+        }
+
+        .business-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            padding: 6rem 0;
+        }
+
+        .business-content {
+            max-width: 600px;
+        }
+
+        .business-features {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+
+        .shareholder-section {
+            position: relative;
+            padding: 6rem 0;
+            text-align: center;
+        }
+
+        .innovation-section {
+            padding: 5rem 0;
+        }
+
+        @media (max-width: 1024px) {
+            .hero {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 2rem;
+            }
+
+            .hero-content {
+                text-align: center;
+            }
+
+            .business-section {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .business-content {
+                text-align: center;
+                margin: 0 auto;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .highlights-grid,
+            .game-features,
+            .business-features,
+            .benefits-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .game-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-image {
+                height: 300px;
+            }
+        }
+
+        /* 添加卡片悬浮效果 */
+        .feature-card, .game-feature-card, .business-card, .benefit-item {
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        /* 卡片发光边框效果 */
+        .feature-card::before, .game-feature-card::before, .business-card::before, .benefit-item::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #ff00ff, #00ffff, #ff00ff);
+            background-size: 400% 400%;
+            z-index: -1;
+            border-radius: 22px;
+            animation: gradientBorder 6s ease infinite;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .feature-card:hover::before, .game-feature-card:hover::before, 
+        .business-card:hover::before, .benefit-item:hover::before {
+            opacity: 1;
+        }
+
+        @keyframes gradientBorder {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* 渐入动画 */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .scroll-reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 图标动画效果 */
+        .feature-icon i, .game-feature-card i, .business-card i, .benefit-item i {
+            transition: all 0.4s ease;
+        }
+
+        .feature-card:hover .feature-icon i,
+        .game-feature-card:hover i,
+        .business-card:hover i,
+        .benefit-item:hover i {
+            transform: scale(1.2) rotate(360deg);
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* 按钮光效果 */
+        .cta-button {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.2) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            transition: all 0.5s ease;
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        /* 点击波纹效果 */
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(0);
+            animation: rippleEffect 0.6s linear;
+            pointer-events: none;
+        }
+
+        @keyframes rippleEffect {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        /* 添加提示框样式 */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 8px;
+            color: white;
+            z-index: 1000;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .toast-info {
+            background: rgba(0, 123, 255, 0.9);
+        }
+
+        .toast-error {
+            background: rgba(255, 0, 0, 0.9);
+        }
+
+        .toast-success {
+            background: rgba(40, 167, 69, 0.9);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* 钱包按钮样式 */
+        .wallet-btn {
+            padding: 15px 40px;
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            border: none; /* 移除边框 */
+            border-radius: 25px;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 移除之前的边框和阴影效果 */
+        .wallet-btn.connected {
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            border: none;
+            box-shadow: none;
+        }
+
+        /* 匹配 cta-button 的悬浮效果 */
+        .wallet-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* 调整图标大小 */
+        .wallet-btn i {
+            font-size: 20px;
+        }
+
+        /* 调整文本样式 */
+        .wallet-btn .wallet-text {
+            font-weight: 500;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .wallet-btn {
+                padding: 12px 30px;
+                font-size: 16px;
+            }
+        }
+
+        /* 移除之前的其他效果 */
+        .wallet-btn::before {
+            display: none;
+        }
+
+        /* 钱包模态框样式 */
+        .wallet-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(20, 20, 30, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            z-index: 1001;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+
+        .wallet-modal.active {
+            display: block;
+        }
+
+        .wallet-modal h2 {
+            color: #fff;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .wallet-options {
+            display: grid;
+            gap: 15px;
+        }
+
+        .wallet-option {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .wallet-option:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .wallet-option img {
+            width: 30px;
+            height: 30px;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+        }
+
+        .modal-overlay.active {
+            display: block;
+        }
+
+        /* 钱包按钮下拉菜单样式 */
+        .wallet-btn-wrapper {
+            position: relative;
+        }
+
+        /* 修改下拉菜单样式 */
+        .wallet-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: rgba(20, 20, 30, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 15px;
+            padding: 15px;
+            margin-top: 10px;
+            min-width: 250px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            pointer-events: none;
+        }
+
+        /* 只在连接状态下显示下拉菜单 */
+        .wallet-btn.connected ~ .wallet-dropdown {
+            pointer-events: auto;
+        }
+
+        .wallet-btn.connected:hover ~ .wallet-dropdown,
+        .wallet-dropdown:hover {
+            display: block;
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* 移除之前的通用悬停显示 */
+        .wallet-btn-wrapper:hover .wallet-dropdown {
+            display: none;
+        }
+
+        /* 添加一个透明的延伸区域，确保鼠标移动到菜单时不会关闭 */
+        .wallet-btn-wrapper::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            height: 20px;
+            background: transparent;
+        }
+
+        /* 优化菜单项的交互体验 */
+        .wallet-action-btn {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+        }
+
+        .wallet-action-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .wallet-info {
+            padding: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .wallet-balance {
+            display: block;
+            font-size: 1.2em;
+            margin-bottom: 5px;
+        }
+
+        .wallet-network {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        .wallet-actions {
+            padding-top: 10px;
+        }
+
+        .wallet-action-btn {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.3s ease;
+        }
+
+        .wallet-action-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* 交易签名模态框样式 */
+        .transaction-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(20, 20, 30, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            z-index: 1002;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            min-width: 400px;
+        }
+
+        .transaction-details {
+            margin: 20px 0;
+        }
+
+        .transaction-details > div {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+        }
+
+        .transaction-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .transaction-actions button {
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .confirm-btn {
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            color: white;
+        }
+
+        .cancel-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        /* 钱包容器样式 */
+        .wallet-container {
+            position: fixed;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+        }
+
+        /* 更新钱包按钮样式 */
+        .wallet-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            padding: 12px 30px;
+            border-radius: 20px;
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            white-space: nowrap;
+        }
+
+        /* 更新下拉菜单位置 */
+        .wallet-dropdown {
+            position: absolute;
+            top: calc(100% + 10px);
+            left: 50%;
+            transform: translateX(-50%);
+            min-width: 280px;
+            background: rgba(20, 20, 30, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 15px;
+            padding: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            display: none;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .wallet-container {
+                top: 20px;
+            }
+
+            .wallet-btn {
+                padding: 10px 20px;
+                font-size: 0.9em;
+            }
+        }
+
+        /* 添加安装提示模态框样式 */
+        .wallet-install-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1002;
+        }
+
+        .wallet-install-content {
+            background: rgba(20, 20, 30, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .wallet-install-content h3 {
+            margin-bottom: 15px;
+            color: #fff;
+        }
+
+        .wallet-install-content p {
+            margin-bottom: 20px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .wallet-install-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .wallet-install-actions button {
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .wallet-install-actions .confirm-btn {
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            color: white;
+        }
+
+        .wallet-install-actions .cancel-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .wallet-action-btn.disconnect {
+            color: #ff4d4d;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 5px;
+            padding-top: 10px;
+        }
+
+        .wallet-action-btn.switch-wallet {
+            color: #00bfff;
+        }
+
+        /* 连接状态下的下拉菜单样式 */
+        .wallet-btn.connected + .wallet-dropdown {
+            pointer-events: auto; /* 连接后启用悬停效果 */
+        }
+
+        /* 移动端适配样式 */
+        @media screen and (max-width: 768px) {
+            /* 整体布局调整 */
+            .container {
+                padding: 0 15px;
+                padding-top: env(safe-area-inset-top);
+                padding-bottom: env(safe-area-inset-bottom);
+                padding-left: env(safe-area-inset-left);
+                padding-right: env(safe-area-inset-right);
+            }
+
+            /* 导航栏调整 */
+            nav {
+                bottom: max(15px, env(safe-area-inset-bottom));
+                width: min(90%, 400px);
+                padding: 12px 20px;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+
+            .nav-links {
+                gap: 8px;
+            }
+
+            .nav-links a {
+                width: 40px;
+                height: 40px;
+                padding: 8px;
+                font-size: 14px;
+            }
+
+            /* Logo调整 */
+            .site-logo {
+                width: 40px;
+                height: 40px;
+                top: 15px;
+                left: 15px;
+            }
+
+            /* 钱包按钮调整 */
+            .wallet-container {
+                top: max(15px, env(safe-area-inset-top));
+                right: 15px;
+                left: auto;
+                transform: none;
+                width: auto;
+            }
+
+            .wallet-btn {
+                padding: 8px 15px !important;
+                font-size: clamp(12px, 3.5vw, 14px) !important;
+            }
+
+            /* 英雄区域调整 */
+            .hero {
+                margin-top: max(80px, calc(env(safe-area-inset-top) + 60px));
+                flex-direction: column;
+                text-align: center;
+                gap: 30px;
+            }
+
+            .hero h1 {
+                font-size: clamp(24px, 6vw, 32px);
+                margin-bottom: 15px;
+            }
+
+            .hero p {
+                font-size: clamp(14px, 4vw, 16px);
+                margin-bottom: 25px;
+            }
+
+            .hero-image {
+                height: 250px;
+            }
+
+            /* 特性卡片调整 */
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                margin: 30px 0;
+            }
+
+            .feature-card {
+                padding: 20px;
+            }
+
+            .feature-card h3 {
+                font-size: 20px;
+            }
+
+            /* 游戏板块调整 */
+            .game-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            /* 商务板块调整 */
+            .business-features {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            /* 股东机制调整 */
+            .benefits-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            /* 模态框调整 */
+            .wallet-modal,
+            .transaction-modal {
+                width: min(90%, 400px);
+                max-height: 80vh;
+                padding: clamp(15px, 4vw, 20px);
+                margin: 0 15px;
+            }
+
+            .wallet-options {
+                gap: 10px;
+            }
+
+            .wallet-option {
+                padding: 12px;
+            }
+
+            /* 下拉菜单调整 */
+            .wallet-dropdown,
+            .language-options,
+            .social-links {
+                position: fixed;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 90%;
+                max-width: 300px;
+                margin-top: 10px;
+            }
+
+            /* 提示框调整 */
+            .toast {
+                width: 90%;
+                left: 50%;
+                transform: translateX(-50%);
+                font-size: 14px;
+                padding: 12px 20px;
+            }
+        }
+
+        /* 超小屏幕设备额外调整 */
+        @media screen and (max-width: 375px) {
+            .nav-links a {
+                width: 35px;
+                height: 35px;
+                font-size: 12px;
+            }
+
+            .hero h1 {
+                font-size: 28px;
+            }
+
+            .hero-image {
+                height: 200px;
+            }
+        }
+
+        /* 横屏模式处理 */
+        @media screen and (max-height: 500px) and (orientation: landscape) {
+            .hero {
+                margin-top: 40px;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+            }
+
+            .features-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            }
+
+            nav {
+                bottom: 10px;
+                padding: 8px 15px;
+            }
+        }
+
+        /* 刘海屏适配 */
+        @supports (padding-top: env(safe-area-inset-top)) {
+            .wallet-container {
+                padding-top: env(safe-area-inset-top);
+            }
+
+            nav {
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+        }
+
+        /* 优化触摸体验 */
+        .wallet-btn,
+        .nav-links a,
+        .feature-card,
+        .wallet-option {
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* 优化字体渲染 */
+        * {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+    </style>
+</head>
+<body>
+    <!-- 修改导航栏结构，将钱包按钮移出 nav -->
+    <a href="#" class="site-logo">
+        <img src="./images/your-vortex-logo.jpg" alt="WEB3 Logo">
+    </a>
+
+    <!-- 修改钱包按钮的下拉菜单 -->
+    <div class="wallet-container">
+        <div class="wallet-btn-wrapper">
+            <a href="#" class="wallet-btn">
+                <i class="fas fa-wallet"></i>
+                <span class="wallet-text">连接钱包</span>
+            </a>
+            <div class="wallet-dropdown">
+                <div class="wallet-info">
+                    <span class="wallet-balance">0 ETH</span>
+                    <span class="wallet-network">Network: -</span>
+                </div>
+                <div class="wallet-actions">
+                    <button class="wallet-action-btn copy-address">
+                        <i class="fas fa-copy"></i> 复制地址
+                    </button>
+                    <button class="wallet-action-btn view-on-explorer">
+                        <i class="fas fa-external-link-alt"></i> 在浏览器中查看
+                    </button>
+                    <button class="wallet-action-btn switch-wallet">
+                        <i class="fas fa-exchange-alt"></i> 切换钱包
+                    </button>
+                    <button class="wallet-action-btn disconnect">
+                        <i class="fas fa-sign-out-alt"></i> 断开连接
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="background"></div>
+    <div class="container">
+        <nav>
+            <div class="nav-links">
+                <a href="#home" class="active">
+                    <i class="fas fa-home"></i>
+                    <span>首页</span>
+                </a>
+                <a href="defi.html">
+                    <i class="fas fa-coins"></i>
+                    <span>Defi</span>
+                </a>
+                <a href="#about">
+                    <i class="fas fa-info-circle"></i>
+                    <span>关于</span>
+                </a>
+                <div class="language-dropdown">
+                    <a href="#" class="language-btn">
+                        <i class="fas fa-globe"></i>
+                        <span>语言</span>
+                    </a>
+                    <div class="language-options">
+                        <a href="#" data-lang="zh">
+                            <span>简体中文</span>
+                        </a>
+                        <a href="#" data-lang="en">
+                            <span>English</span>
+                        </a>
+                        <a href="#" data-lang="ko">
+                            <span>한국어</span>
+                        </a>
+                        <a href="#" data-lang="ja">
+                            <span>日本語</span>
+                        </a>
+                        <a href="#" data-lang="vi">
+                            <span>Tiếng Việt</span>
+                        </a>
+                        <a href="#" data-lang="tr">
+                            <span>Türkçe</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="contact-dropdown">
+                    <a href="#" class="contact-btn">
+                        <i class="fas fa-envelope"></i>
+                        <span>联系</span>
+                    </a>
+                    <div class="social-links">
+                        <a href="https://x.com/peakcoineth" target="_blank">
+                            <i class="fab fa-twitter"></i>
+                            <span>Twitter</span>
+                        </a>
+                        <a href="https://t.me/EnjoyPlaytime" target="_blank">
+                            <i class="fab fa-telegram"></i>
+                            <span>Telegram</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <section class="hero">
+            <div class="hero-content">
+                <h1 class="gradient-text">探索 WEB3 的未来</h1>
+                <p>连接去中心化世界，打造数字资产新生态</p>
+                <button class="cta-button">立即开始</button>
+            </div>
+            <div class="hero-image">
+                <img src="./images/web3-future.jpg" alt="Web3 Development Future">
+            </div>
+        </section>
+
+        <section class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-gamepad"></i>
+                </div>
+                <h3>创新游戏体验</h3>
+                <p>独创的房间竞技模式，灵活的投注策略玩法</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-coins"></i>
+                </div>
+                <h3>全民股东收益</h3>
+                <p>基于区块链技术，实现真正的去中心化数据存储和交易。</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-globe"></i>
+                </div>
+                <h3>去中心化商务平台</h3>
+                <p>基于区块链技术，打造安全、高效的商务生态系统</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-link"></i>
+                </div>
+                <h3>完整通证经济体系</h3>
+                <p>自动化执行的合约系统，确保交易的安全性和可靠性。</p>
+            </div>
+        </section>
+
+        <section class="game-section">
+            <h2 class="section-title">游戏板块：策略与乐趣的完美融合</h2>
+            <div class="game-grid">
+                <div class="game-feature-card">
+                    <i class="fas fa-dice"></i>
+                    <h3>独创房间竞技</h3>
+                    <p>8个独特房间任你选择，灵活的投注策略玩法</p>
+                </div>
+                <div class="game-feature-card">
+                    <i class="fas fa-trophy"></i>
+                    <h3>公平透明奖励</h3>
+                    <p>赢家瓜分奖池，收益即时到账</p>
+                </div>
+                <div class="game-feature-card">
+                    <i class="fas fa-users"></i>
+                    <h3>社交互动</h3>
+                    <p>与全球玩家同场竞技，丰富的社交功能</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="business-section">
+            <div class="business-content">
+                <h2 class="section-title">商务平台：重构商业新生态</h2>
+                <p>基于区块链技术，打造安全、高效的商务生态系统</p>
+            </div>
+            <div class="business-features">
+                <div class="business-card">
+                    <i class="fas fa-shield-alt"></i>
+                    <h3>安全交易</h3>
+                    <ul>
+                        <li>区块链技术保障</li>
+                        <li>多重安全验证</li>
+                        <li>交易全程可追溯</li>
+                    </ul>
+                </div>
+                <div class="business-card">
+                    <i class="fas fa-wallet"></i>
+                    <h3>便捷支付</h3>
+                    <ul>
+                        <li>支持多种加密货币</li>
+                        <li>跨境支付零障碍</li>
+                        <li>秒级确认到账</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="shareholder-section">
+            <h2 class="section-title">创新的全民股东机制</h2>
+            <div class="benefits-grid">
+                <div class="benefit-item">
+                    <i class="fas fa-percentage"></i>
+                    <h3>平台40%年度净利润分红</h3>
+                </div>
+                <div class="benefit-item">
+                    <i class="fas fa-gift"></i>
+                    <h3>专属会员权益</h3>
+                </div>
+                <div class="benefit-item">
+                    <i class="fas fa-vote-yea"></i>
+                    <h3>社区治理投票权</h3>
+                </div>
+                <div class="benefit-item">
+                    <i class="fas fa-gem"></i>
+                    <h3>平台生态特权</h3>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- 添加钱包连接模态框 -->
+    <div class="modal-overlay"></div>
+    <div class="wallet-modal">
+        <h2>连接钱包</h2>
+        <div class="wallet-options">
+            <div class="wallet-option" data-wallet="metamask">
+                <img src="./images/metamask.jpg" alt="MetaMask">
+                <span>MetaMask</span>
+            </div>
+            <div class="wallet-option" data-wallet="walletconnect">
+                <img src="./images/walletconnect.jpg" alt="WalletConnect">
+                <span>WalletConnect</span>
+            </div>
+            <div class="wallet-option" data-wallet="trustwallet">
+                <img src="./images/trustwallet.jpg" alt="Trust Wallet">
+                <span>Trust Wallet</span>
+            </div>
+            <div class="wallet-option" data-wallet="phantom">
+                <img src="./images/phantom.jpg" alt="Phantom">
+                <span>Phantom (SOL)</span>
+            </div>
+            <div class="wallet-option" data-wallet="telegram">
+                <img src="./images/telegram-wallet.jpg" alt="Telegram Wallet">
+                <span>Telegram Wallet</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加交易签名模态框 -->
+    <div class="transaction-modal">
+        <h2>确认交易</h2>
+        <div class="transaction-details">
+            <div class="transaction-from">
+                <span>From:</span>
+                <span class="address"></span>
+            </div>
+            <div class="transaction-to">
+                <span>To:</span>
+                <span class="address"></span>
+            </div>
+            <div class="transaction-amount">
+                <span>Amount:</span>
+                <span class="value"></span>
+            </div>
+            <div class="transaction-gas">
+                <span>Estimated Gas:</span>
+                <span class="value"></span>
+            </div>
+        </div>
+        <div class="transaction-actions">
+            <button class="confirm-btn">确认</button>
+            <button class="cancel-btn">取消</button>
+        </div>
+    </div>
+
+    <!-- 添加 JavaScript -->
+    <script>
+        // 添加多语言翻译数据
+        const translations = {
+            zh: {
+                home: "首页",
+                features: "特性",
+                about: "关于",
+                contact: "联系",
+                language: "语言",
+                explore: "探索 WEB3 的未来",
+                connect: "连接去中心化世界，打造数字资产新生态",
+                startNow: "立即开始",
+                // 游戏板块
+                gameTitle: "游戏板块：策略与乐趣的完美融合",
+                gameRoom: "独创房间竞技",
+                gameRoomDesc: "8个独特房间任你选择，灵活的投注策略玩法",
+                fairReward: "公平透明奖励",
+                fairRewardDesc: "赢家瓜分奖池，收益即时到账",
+                social: "社交互动",
+                socialDesc: "与全球玩家同场竞技，丰富的社交功能",
+                // 特性卡片
+                innovativeGame: "创新游戏体验",
+                innovativeGameDesc: "独创的房间竞技模式，灵活的投注策略玩法",
+                shareholderBenefit: "全民股东收益",
+                shareholderBenefitDesc: "基于区块链技术，实现真正的去中心化数据存储和交易",
+                decentralizedPlatform: "去中心化商务平台",
+                decentralizedPlatformDesc: "基于区块链技术，打造安全、高效的商务生态系统",
+                tokenSystem: "完整通证经济体系",
+                tokenSystemDesc: "自动化执行的合约系统，确保交易的安全性和可靠性",
+                // 商务平台
+                businessTitle: "商务平台：重构商业新生态",
+                businessDesc: "基于区块链技术，打造安全、高效的商务生态系统",
+                secureTrading: "安全交易",
+                secureBlockchain: "区块链技术保障",
+                multiAuth: "多重安全验证",
+                traceableTransactions: "交易全程可追溯",
+                easyPayment: "便捷支付",
+                multiCrypto: "支持多种加密货币",
+                crossBorder: "跨境支付零障碍",
+                instantConfirm: "秒级确认到账",
+                // 股东机制
+                shareholderTitle: "创新的全民股东机制",
+                profitSharing: "平台40%年度净利润分红",
+                memberBenefits: "专属会员权益",
+                governanceRights: "社区治理投票权",
+                platformPrivileges: "平台生态特权"
+            },
+            en: {
+                home: "Home",
+                features: "Features",
+                about: "About",
+                contact: "Contact",
+                language: "Language",
+                explore: "Explore the Future of WEB3",
+                connect: "Connect to the decentralized world, build a new digital asset ecosystem",
+                startNow: "Start Now",
+                // Game section
+                gameTitle: "Game Section: Perfect Fusion of Strategy and Fun",
+                gameRoom: "Innovative Room Competition",
+                gameRoomDesc: "Choose from 8 unique rooms, flexible betting strategies",
+                fairReward: "Fair & Transparent Rewards",
+                fairRewardDesc: "Winners share the pool, instant earnings",
+                social: "Social Interaction",
+                socialDesc: "Compete with global players, rich social features",
+                // Feature cards
+                innovativeGame: "Innovative Gaming Experience",
+                innovativeGameDesc: "Original room competition mode, flexible betting strategies",
+                shareholderBenefit: "Universal Shareholder Benefits",
+                shareholderBenefitDesc: "Achieve true decentralized data storage and transactions based on blockchain",
+                decentralizedPlatform: "Decentralized Business Platform",
+                decentralizedPlatformDesc: "Build a secure and efficient business ecosystem based on blockchain",
+                tokenSystem: "Complete Token Economy",
+                tokenSystemDesc: "Automated contract system ensuring transaction security and reliability",
+                // Business Platform
+                businessTitle: "Business Platform: Reshaping Business Ecosystem",
+                businessDesc: "Building a secure and efficient business ecosystem based on blockchain technology",
+                secureTrading: "Secure Trading",
+                secureBlockchain: "Blockchain Technology Protection",
+                multiAuth: "Multi-level Security Verification",
+                traceableTransactions: "Fully Traceable Transactions",
+                easyPayment: "Easy Payment",
+                multiCrypto: "Multiple Cryptocurrency Support",
+                crossBorder: "Seamless Cross-border Payments",
+                instantConfirm: "Instant Confirmation",
+                // Shareholder Mechanism
+                shareholderTitle: "Innovative Universal Shareholder Mechanism",
+                profitSharing: "40% Annual Net Profit Distribution",
+                memberBenefits: "Exclusive Member Benefits",
+                governanceRights: "Community Governance Voting Rights",
+                platformPrivileges: "Platform Ecosystem Privileges"
+            },
+            ko: {
+                home: "홈",
+                features: "특징",
+                about: "소개",
+                contact: "연락처",
+                language: "언어",
+                explore: "WEB3의 미래 탐색",
+                connect: "탈중앙화 세계에 연결하여 새로운 디지털 자산 생태계 구축",
+                startNow: "시작하기",
+                // 게임 섹션
+                gameTitle: "게임 섹션: 전략과 재미의 완벽한 조화",
+                gameRoom: "혁신적인 룸 경쟁",
+                gameRoomDesc: "8개의 독특한 룸 선택, 유연한 베팅 전략",
+                fairReward: "공정하고 투명한 보상",
+                fairRewardDesc: "승자가 상금 풀을 공유, 즉시 수익 실현",
+                social: "소셜 인터랙션",
+                socialDesc: "전 세계 플레이어와 경쟁, 풍부한 소셜 기능",
+                // 특징 카드
+                innovativeGame: "혁신적인 게임 경험",
+                innovativeGameDesc: "독창적인 룸 경쟁 모드, 유연한 베팅 전략",
+                shareholderBenefit: "전체 주주 혜택",
+                shareholderBenefitDesc: "블록체인 기술 기반의 진정한 탈중앙화 데이터 저장 및 거래",
+                decentralizedPlatform: "탈중앙화 비즈니스 플랫폼",
+                decentralizedPlatformDesc: "블록체인 기반의 안전하고 효율적인 비즈니스 생태계 구축",
+                tokenSystem: "완전한 토큰 이코노미",
+                tokenSystemDesc: "거래 보안과 신뢰성을 보장하는 자동화된 계약 시스템",
+                // 비즈니스 플랫폼
+                businessTitle: "비즈니스 플랫폼: 비즈니스 생태계 재구성",
+                businessDesc: "블록체인 기술 기반의 안전하고 효율적인 비즈니스 생태계 구축",
+                secureTrading: "안전한 거래",
+                secureBlockchain: "블록체인 기술 보호",
+                multiAuth: "다중 보안 인증",
+                traceableTransactions: "완전 추적 가능한 거래",
+                easyPayment: "간편 결제",
+                multiCrypto: "다중 암호화폐 지원",
+                crossBorder: "원활한 국경간 결제",
+                instantConfirm: "즉시 확인",
+                // 주주 메커니즘
+                shareholderTitle: "혁신적인 전체 주주 메커니즘",
+                profitSharing: "연간 순이익의 40% 분배",
+                memberBenefits: "독점 회원 혜택",
+                governanceRights: "커뮤니티 거버넌스 투표권",
+                platformPrivileges: "플랫폼 생태계 특권"
+            },
+            ja: {
+                home: "ホーム",
+                features: "特徴",
+                about: "概要",
+                contact: "連絡先",
+                language: "言語",
+                explore: "WEB3の未来を探索",
+                connect: "分散型世界に接続し、新しいデジタル資産エコシステムを構築",
+                startNow: "今すぐ始める",
+                // ゲームセクション
+                gameTitle: "ゲームセクション：戦略と楽しさの完璧な融合",
+                gameRoom: "革新的なルーム競技",
+                gameRoomDesc: "8つのユニークなルームから選択、柔軟な賭け戦略",
+                fairReward: "公平で透明な報酬",
+                fairRewardDesc: "勝者がプールを共有、即時収益",
+                social: "ソーシャルインタラクション",
+                socialDesc: "グローバルプレイヤーとの競争、豊富なソーシャル機能",
+                // 特徴カード
+                innovativeGame: "革新的なゲーム体験",
+                innovativeGameDesc: "独創的なルーム競技モード、柔軟な賭け戦略",
+                shareholderBenefit: "ユニバーサル株主特典",
+                shareholderBenefitDesc: "ブロックチェーン技術に基づく真の分散型データストレージと取引",
+                decentralizedPlatform: "分散型ビジネスプラットフォーム",
+                decentralizedPlatformDesc: "ブロックチェーンに基づく安全で効率的なビジネスエコシステムの構築",
+                tokenSystem: "完全なトークンエコノミー",
+                tokenSystemDesc: "取引のセキュリティと信頼性を確保する自動化された契約システム",
+                // ビジネスプラットフォーム
+                businessTitle: "ビジネスプラットフォーム：ビジネスエコシステムの再構築",
+                businessDesc: "ブロックチェーン技術に基づく安全で効率的なビジネスエコシステムの構築",
+                secureTrading: "安全な取引",
+                secureBlockchain: "ブロックチェーン技術保護",
+                multiAuth: "マルチレベルセキュリティ認証",
+                traceableTransactions: "完全追跡可能な取引",
+                easyPayment: "簡単な支払い",
+                multiCrypto: "複数の暗号通貨サポート",
+                crossBorder: "シームレスな国境を越えた支払い",
+                instantConfirm: "即時確認",
+                // 株主メカニズム
+                shareholderTitle: "革新的なユニバーサル株主メカニズム",
+                profitSharing: "年間純利益の40%配当",
+                memberBenefits: "独占会員特典",
+                governanceRights: "コミュニティガバナンス投票権",
+                platformPrivileges: "プラットフォームエコシステム特権"
+            },
+            vi: {
+                home: "Trang chủ",
+                features: "Tính năng",
+                about: "Giới thiệu",
+                contact: "Liên hệ",
+                language: "Ngôn ngữ",
+                explore: "Khám phá Tương lai của WEB3",
+                connect: "Kết nối với thế giới phi tập trung, xây dựng hệ sinh thái tài sản số mới",
+                startNow: "Bắt đầu ngay",
+                // Phần trò chơi
+                gameTitle: "Phần Trò chơi: Kết hợp hoàn hảo giữa Chiến lược và Niềm vui",
+                gameRoom: "Phòng thi đấu sáng tạo",
+                gameRoomDesc: "Lựa chọn từ 8 phòng độc đáo, chiến lược cược linh hoạt",
+                fairReward: "Phần thưởng công bằng & minh bạch",
+                fairRewardDesc: "Người chiến thắng chia sẻ tiền thưởng, thu nhập tức thì",
+                social: "Tương tác xã hội",
+                socialDesc: "Thi đấu với người chơi toàn cầu, tính năng xã hội phong phú",
+                // Thẻ tính năng
+                innovativeGame: "Trải nghiệm chơi game sáng tạo",
+                innovativeGameDesc: "Chế độ thi đấu phòng độc đáo, chiến lược cược linh hoạt",
+                shareholderBenefit: "Lợi ích cổ đông phổ quát",
+                shareholderBenefitDesc: "Lưu trữ và giao dịch dữ liệu phi tập trung thực sự dựa trên blockchain",
+                decentralizedPlatform: "Nền tảng kinh doanh phi tập trung",
+                decentralizedPlatformDesc: "Xây dựng hệ sinh thái kinh doanh an toàn và hiệu quả dựa trên blockchain",
+                tokenSystem: "Hệ thống token hoàn chỉnh",
+                tokenSystemDesc: "Hệ thống hợp đồng tự động đảm bảo an toàn và độ tin cậy giao dịch",
+                // Nền tảng kinh doanh
+                businessTitle: "Nền tảng Kinh doanh: Định hình lại Hệ sinh thái Kinh doanh",
+                businessDesc: "Xây dựng hệ sinh thái kinh doanh an toàn và hiệu quả dựa trên công nghệ blockchain",
+                secureTrading: "Giao dịch an toàn",
+                secureBlockchain: "Bảo vệ công nghệ Blockchain",
+                multiAuth: "Xác thực bảo mật đa cấp",
+                traceableTransactions: "Giao dịch có thể theo dõi hoàn toàn",
+                easyPayment: "Thanh toán dễ dàng",
+                multiCrypto: "Hỗ trợ nhiều loại tiền điện tử",
+                crossBorder: "Thanh toán xuyên biên giới liền mạch",
+                instantConfirm: "Xác nhận tức thì",
+                // Cơ chế cổ đông
+                shareholderTitle: "Cơ chế Cổ đông Phổ quát Sáng tạo",
+                profitSharing: "Phân phối 40% Lợi nhuận Ròng Hàng năm",
+                memberBenefits: "Quyền lợi Thành viên Độc quyền",
+                governanceRights: "Quyền Bỏ phiếu Quản trị Cộng đồng",
+                platformPrivileges: "Đặc quyền Hệ sinh thái Nền tảng"
+            },
+            tr: {
+                home: "Ana Sayfa",
+                features: "Özellikler",
+                about: "Hakkında",
+                contact: "İletişim",
+                language: "Dil",
+                explore: "WEB3'ün Geleceğini Keşfedin",
+                connect: "Merkezi olmayan dünyaya bağlanın, yeni bir dijital varlık ekosistemi oluşturun",
+                startNow: "Hemen Başla",
+                // Oyun bölümü
+                gameTitle: "Oyun Bölümü: Strateji ve Eğlencenin Mükemmel Birleşimi",
+                gameRoom: "Yenilikçi Oda Yarışması",
+                gameRoomDesc: "8 benzersiz odadan seçim yapın, esnek bahis stratejileri",
+                fairReward: "Adil ve Şeffaf Ödüller",
+                fairRewardDesc: "Kazananlar havuzu paylaşır, anında kazanç",
+                social: "Sosyal Etkileşim",
+                socialDesc: "Küresel oyuncularla rekabet edin, zengin sosyal özellikler",
+                // Özellik kartları
+                innovativeGame: "Yenilikçi Oyun Deneyimi",
+                innovativeGameDesc: "Orijinal oda yarışma modu, esnek bahis stratejileri",
+                shareholderBenefit: "Evrensel Hissedar Faydaları",
+                shareholderBenefitDesc: "Blockchain tabanlı gerçek merkezi olmayan veri depolama ve işlemler",
+                decentralizedPlatform: "Merkezi Olmayan İş Platformu",
+                decentralizedPlatformDesc: "Blockchain tabanlı güvenli ve verimli bir iş ekosistemi oluşturun",
+                tokenSystem: "Eksiksiz Token Ekonomisi",
+                tokenSystemDesc: "İşlem güvenliğini ve güvenilirliğini sağlayan otomatik sözleşme sistemi",
+                // İş Platformu
+                businessTitle: "İş Platformu: İş Ekosistemini Yeniden Şekillendirme",
+                businessDesc: "Blockchain teknolojisine dayalı güvenli ve verimli bir iş ekosistemi oluşturma",
+                secureTrading: "Güvenli Ticaret",
+                secureBlockchain: "Blockchain Teknolojisi Koruması",
+                multiAuth: "Çok Seviyeli Güvenlik Doğrulaması",
+                traceableTransactions: "Tamamen İzlenebilir İşlemler",
+                easyPayment: "Kolay Ödeme",
+                multiCrypto: "Çoklu Kripto Para Desteği",
+                crossBorder: "Kesintisiz Sınır Ötesi Ödemeler",
+                instantConfirm: "Anında Onay",
+                // Hissedar Mekanizması
+                shareholderTitle: "Yenilikçi Evrensel Hissedar Mekanizması",
+                profitSharing: "%40 Yıllık Net Kâr Dağıtımı",
+                memberBenefits: "Özel Üye Avantajları",
+                governanceRights: "Topluluk Yönetimi Oy Hakları",
+                platformPrivileges: "Platform Ekosistemi Ayrıcalıkları"
+            }
+        };
+
+        // 更新页面文本的函数
+        function updatePageLanguage(lang) {
+            // 更新导航栏
+            document.querySelector('a[href="#home"] span').textContent = translations[lang].home;
+            document.querySelector('a[href="defi.html"] span').textContent = translations[lang].features;
+            document.querySelector('a[href="#about"] span').textContent = translations[lang].about;
+            document.querySelector('.contact-btn span').textContent = translations[lang].contact;
+            document.querySelector('.language-btn span').textContent = translations[lang].language;
+
+            // 更新主要内容
+            document.querySelector('.hero h1').textContent = translations[lang].explore;
+            document.querySelector('.hero p').textContent = translations[lang].connect;
+            document.querySelector('.cta-button').textContent = translations[lang].startNow;
+
+            // 更新游戏板块
+            document.querySelector('.game-section .section-title').textContent = translations[lang].gameTitle;
+            const gameCards = document.querySelectorAll('.game-feature-card');
+            gameCards[0].querySelector('h3').textContent = translations[lang].gameRoom;
+            gameCards[0].querySelector('p').textContent = translations[lang].gameRoomDesc;
+            gameCards[1].querySelector('h3').textContent = translations[lang].fairReward;
+            gameCards[1].querySelector('p').textContent = translations[lang].fairRewardDesc;
+            gameCards[2].querySelector('h3').textContent = translations[lang].social;
+            gameCards[2].querySelector('p').textContent = translations[lang].socialDesc;
+
+            // 更新特性卡片
+            const featureCards = document.querySelectorAll('.feature-card');
+            featureCards[0].querySelector('h3').textContent = translations[lang].innovativeGame;
+            featureCards[0].querySelector('p').textContent = translations[lang].innovativeGameDesc;
+            featureCards[1].querySelector('h3').textContent = translations[lang].shareholderBenefit;
+            featureCards[1].querySelector('p').textContent = translations[lang].shareholderBenefitDesc;
+            featureCards[2].querySelector('h3').textContent = translations[lang].decentralizedPlatform;
+            featureCards[2].querySelector('p').textContent = translations[lang].decentralizedPlatformDesc;
+            featureCards[3].querySelector('h3').textContent = translations[lang].tokenSystem;
+            featureCards[3].querySelector('p').textContent = translations[lang].tokenSystemDesc;
+
+            // 更新商务平台部分
+            document.querySelector('.business-section .section-title').textContent = translations[lang].businessTitle;
+            document.querySelector('.business-content p').textContent = translations[lang].businessDesc;
+            
+            const businessCards = document.querySelectorAll('.business-card');
+            // 安全交易卡片
+            businessCards[0].querySelector('h3').textContent = translations[lang].secureTrading;
+            const secureList = businessCards[0].querySelectorAll('li');
+            secureList[0].textContent = translations[lang].secureBlockchain;
+            secureList[1].textContent = translations[lang].multiAuth;
+            secureList[2].textContent = translations[lang].traceableTransactions;
+            
+            // 便捷支付卡片
+            businessCards[1].querySelector('h3').textContent = translations[lang].easyPayment;
+            const paymentList = businessCards[1].querySelectorAll('li');
+            paymentList[0].textContent = translations[lang].multiCrypto;
+            paymentList[1].textContent = translations[lang].crossBorder;
+            paymentList[2].textContent = translations[lang].instantConfirm;
+
+            // 更新股东机制部分
+            document.querySelector('.shareholder-section .section-title').textContent = translations[lang].shareholderTitle;
+            
+            const benefitItems = document.querySelectorAll('.benefit-item h3');
+            benefitItems[0].textContent = translations[lang].profitSharing;
+            benefitItems[1].textContent = translations[lang].memberBenefits;
+            benefitItems[2].textContent = translations[lang].governanceRights;
+            benefitItems[3].textContent = translations[lang].platformPrivileges;
+
+            // 更新语言选择的选中标记
+            document.querySelectorAll('.language-options a').forEach(el => {
+                // 移除所有的选中图标
+                const existingCheck = el.querySelector('.fas.fa-check');
+                if (existingCheck) {
+                    existingCheck.remove();
+                }
+                
+                // 为当前选中的语言添加选中图标
+                if (el.getAttribute('data-lang') === lang) {
+                    const checkIcon = document.createElement('i');
+                    checkIcon.className = 'fas fa-check';
+                    el.insertBefore(checkIcon, el.firstChild);
+                }
+            });
+
+            // 保存语言选择到本地存储
+            localStorage.setItem('selectedLanguage', lang);
+        }
+
+        // 修改语言切换事件处理
+        document.querySelectorAll('.language-options a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                // 获取并切换语言
+                const lang = this.getAttribute('data-lang');
+                updatePageLanguage(lang);
+                // 关闭下拉菜单
+                this.closest('.language-dropdown').classList.remove('active');
+            });
+        });
+
+        // 页面加载时检查并应用保存的语言设置
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedLanguage = localStorage.getItem('selectedLanguage') || 'zh';
+            updatePageLanguage(savedLanguage);
+        });
+
+        document.querySelector('.contact-btn').addEventListener('click', function(e) {
+            e.preventDefault();
+            const dropdown = this.closest('.contact-dropdown');
+            dropdown.classList.toggle('active');
+
+            // 点击其他地方关闭下拉菜单
+            document.addEventListener('click', function closeDropdown(e) {
+                if (!dropdown.contains(e.target)) {
+                    dropdown.classList.remove('active');
+                    document.removeEventListener('click', closeDropdown);
+                }
+            });
+        });
+
+        // 添加语言切换功能
+        document.querySelector('.language-btn').addEventListener('click', function(e) {
+            e.preventDefault();
+            const dropdown = this.closest('.language-dropdown');
+            dropdown.classList.toggle('active');
+
+            // 点击其他地方关闭下拉菜单
+            document.addEventListener('click', function closeDropdown(e) {
+                if (!dropdown.contains(e.target)) {
+                    dropdown.classList.remove('active');
+                    document.removeEventListener('click', closeDropdown);
+                }
+            });
+        });
+
+        // 添加滚动动画
+        function handleScrollAnimation() {
+            const elements = document.querySelectorAll('.feature-card, .game-feature-card, .business-card, .benefit-item');
+            
+            elements.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                const elementBottom = element.getBoundingClientRect().bottom;
+                
+                if (elementTop < window.innerHeight && elementBottom > 0) {
+                    element.classList.add('scroll-reveal', 'active');
+                }
+            });
+        }
+
+        // 监听滚动事件
+        window.addEventListener('scroll', handleScrollAnimation);
+
+        // 添加点击波纹效果
+        document.querySelectorAll('.feature-card, .game-feature-card, .business-card, .benefit-item')
+            .forEach(card => {
+                card.addEventListener('click', function(e) {
+                    const ripple = document.createElement('div');
+                    ripple.className = 'ripple';
+                    
+                    const rect = this.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height);
+                    
+                    ripple.style.width = ripple.style.height = `${size}px`;
+                    ripple.style.left = `${e.clientX - rect.left - size/2}px`;
+                    ripple.style.top = `${e.clientY - rect.top - size/2}px`;
+                    
+                    this.appendChild(ripple);
+                    
+                    setTimeout(() => ripple.remove(), 600);
+                });
+            });
+
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', handleScrollAnimation);
+
+        // API 服务模块
+        const ApiService = {
+            baseUrl: 'https://your-api-domain.com/api', // 替换为实际的API域名
+            
+            // 获取认证令牌
+            getToken() {
+                return localStorage.getItem('auth_token');
+            },
+
+            // 设置请求头
+            getHeaders() {
+                const headers = {
+                    'Content-Type': 'application/json',
+                };
+                const token = this.getToken();
+                if (token) {
+                    headers['Authorization'] = `Bearer ${token}`;
+                }
+                return headers;
+            },
+
+            // 通用请求方法
+            async request(endpoint, options = {}) {
+                try {
+                    const response = await fetch(`${this.baseUrl}${endpoint}`, {
+                        ...options,
+                        headers: this.getHeaders(),
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    return data;
+                } catch (error) {
+                    console.error('API request failed:', error);
+                    throw error;
+                }
+            },
+
+            // 用户认证相关
+            auth: {
+                // 用户登录
+                async login(credentials) {
+                    const response = await ApiService.request('/auth/login', {
+                        method: 'POST',
+                        body: JSON.stringify(credentials)
+                    });
+                    if (response.token) {
+                        localStorage.setItem('auth_token', response.token);
+                    }
+                    return response;
+                },
+
+                // 用户注册
+                async register(userData) {
+                    return await ApiService.request('/auth/register', {
+                        method: 'POST',
+                        body: JSON.stringify(userData)
+                    });
+                },
+
+                // 退出登录
+                logout() {
+                    localStorage.removeItem('auth_token');
+                }
+            },
+
+            // 游戏相关
+            game: {
+                // 获取房间列表
+                async getRooms() {
+                    return await ApiService.request('/game/rooms');
+                },
+
+                // 加入房间
+                async joinRoom(roomId) {
+                    return await ApiService.request(`/game/rooms/${roomId}/join`, {
+                        method: 'POST'
+                    });
+                },
+
+                // 获取游戏记录
+                async getHistory() {
+                    return await ApiService.request('/game/history');
+                }
+            },
+
+            // 用户相关
+            user: {
+                // 获取用户信息
+                async getProfile() {
+                    return await ApiService.request('/user/profile');
+                },
+
+                // 更新用户信息
+                async updateProfile(data) {
+                    return await ApiService.request('/user/profile', {
+                        method: 'PUT',
+                        body: JSON.stringify(data)
+                    });
+                }
+            },
+
+            // 交易相关
+            transaction: {
+                // 获取余额
+                async getBalance() {
+                    return await ApiService.request('/transaction/balance');
+                },
+
+                // 充值
+                async deposit(amount) {
+                    return await ApiService.request('/transaction/deposit', {
+                        method: 'POST',
+                        body: JSON.stringify({ amount })
+                    });
+                },
+
+                // 提现
+                async withdraw(amount) {
+                    return await ApiService.request('/transaction/withdraw', {
+                        method: 'POST',
+                        body: JSON.stringify({ amount })
+                    });
+                }
+            }
+        };
+
+        // 使用示例
+        document.addEventListener('DOMContentLoaded', async () => {
+            // 检查用户登录状态
+            const token = ApiService.getToken();
+            if (token) {
+                try {
+                    // 获取用户信息
+                    const userProfile = await ApiService.user.getProfile();
+                    // 获取用户余额
+                    const balance = await ApiService.transaction.getBalance();
+                    // 处理用户数据...
+                } catch (error) {
+                    console.error('Failed to load user data:', error);
+                    // 处理错误...
+                }
+            }
+
+            // 处理登录按钮点击
+            document.querySelector('.cta-button').addEventListener('click', async () => {
+                try {
+                    // 这里应该弹出登录框或跳转到登录页面
+                    const credentials = {
+                        username: 'user_input_username',
+                        password: 'user_input_password'
+                    };
+                    const loginResponse = await ApiService.auth.login(credentials);
+                    if (loginResponse.success) {
+                        // 登录成功处理
+                        window.location.href = '/dashboard.html';
+                    }
+                } catch (error) {
+                    console.error('Login failed:', error);
+                    // 显示错误消息
+                }
+            });
+        });
+
+        // 错误处理和提示模块
+        const Toast = {
+            show(message, type = 'info') {
+                // 创建提示元素
+                const toast = document.createElement('div');
+                toast.className = `toast toast-${type}`;
+                toast.textContent = message;
+                
+                // 添加到页面
+                document.body.appendChild(toast);
+                
+                // 自动消失
+                setTimeout(() => {
+                    toast.remove();
+                }, 3000);
+            }
+        };
+
+        // 添加全局错误处理
+        window.addEventListener('unhandledrejection', event => {
+            Toast.show(event.reason.message || 'An error occurred', 'error');
+        });
+
+        // Web3钱包服务
+        const WalletService = {
+            web3: null,
+            account: null,
+            solAccount: null,
+            chainId: null,
+            networks: {
+                1: 'Ethereum',
+                56: 'BSC',
+                137: 'Polygon'
+            },
+
+            // 钱包配置
+            WALLET_CONFIG: {
+                metamask: {
+                    name: 'MetaMask',
+                    downloadUrl: 'https://metamask.io/download/',
+                    checkInstalled: () => typeof window.ethereum !== 'undefined' && window.ethereum.isMetaMask
+                },
+                phantom: {
+                    name: 'Phantom',
+                    downloadUrl: 'https://phantom.app/',
+                    checkInstalled: () => typeof window.solana !== 'undefined' && window.solana.isPhantom
+                },
+                trustwallet: {
+                    name: 'Trust Wallet',
+                    downloadUrl: 'https://trustwallet.com/download',
+                    checkInstalled: () => typeof window.ethereum !== 'undefined' && window.ethereum.isTrust
+                },
+                telegram: {
+                    name: 'Telegram Wallet',
+                    downloadUrl: 'https://wallet.telegram.org',
+                    checkInstalled: () => typeof window.Telegram?.WebApp !== 'undefined'
+                }
+            },
+
+            // 初始化Web3
+            async init() {
+                if (typeof window.ethereum !== 'undefined') {
+                    this.web3 = new Web3(window.ethereum);
+                    this.chainId = await this.web3.eth.getChainId();
+                    return true;
+                }
+                return false;
+            },
+
+            // 通用连接方法
+            async connectWallet(walletType) {
+                const config = this.WALLET_CONFIG[walletType];
+                if (!config) {
+                    Toast.show('不支持的钱包类型', 'error');
+                    return false;
+                }
+
+                // 检查钱包是否已安装
+                if (!config.checkInstalled()) {
+                    const shouldInstall = await this.showInstallPrompt(config.name, config.downloadUrl);
+                    if (shouldInstall) {
+                        window.open(config.downloadUrl, '_blank');
+                    }
+                    return false;
+                }
+
+                // 根据钱包类型调用相应的连接方法
+                try {
+                    let connected = false;
+                    switch (walletType) {
+                        case 'metamask':
+                            connected = await this.connectMetaMask();
+                            break;
+                        case 'phantom':
+                            connected = await this.connectPhantom();
+                            break;
+                        case 'trustwallet':
+                            connected = await this.connectTrustWallet();
+                            break;
+                        case 'telegram':
+                            connected = await this.connectTelegram();
+                            break;
+                    }
+
+                    if (connected) {
+                        Toast.show(`${config.name} 连接成功`, 'success');
+                        return true;
+                    }
+                } catch (error) {
+                    console.error(`${config.name} 连接失败:`, error);
+                    Toast.show(error.message || `${config.name} 连接失败`, 'error');
+                }
+                return false;
+            },
+
+            // 显示安装提示
+            showInstallPrompt(walletName, downloadUrl) {
+                return new Promise((resolve) => {
+                    const modal = document.createElement('div');
+                    modal.className = 'wallet-install-modal';
+                    modal.innerHTML = `
+                        <div class="wallet-install-content">
+                            <h3>未检测到 ${walletName}</h3>
+                            <p>您需要安装 ${walletName} 才能继续。是否前往下载？</p>
+                            <div class="wallet-install-actions">
+                                <button class="confirm-btn">前往安装</button>
+                                <button class="cancel-btn">取消</button>
+                            </div>
+                        </div>
+                    `;
+
+                    document.body.appendChild(modal);
+
+                    const confirmBtn = modal.querySelector('.confirm-btn');
+                    const cancelBtn = modal.querySelector('.cancel-btn');
+
+                    confirmBtn.onclick = () => {
+                        modal.remove();
+                        resolve(true);
+                    };
+
+                    cancelBtn.onclick = () => {
+                        modal.remove();
+                        resolve(false);
+                    };
+                });
+            },
+
+            // 连接 MetaMask
+            async connectMetaMask() {
+                try {
+                    const accounts = await window.ethereum.request({
+                        method: 'eth_requestAccounts'
+                    });
+                    this.account = accounts[0];
+                    this.updateWalletUI();
+                    
+                    // 监听账户变化
+                    window.ethereum.on('accountsChanged', (accounts) => {
+                        this.account = accounts[0];
+                        this.updateWalletUI();
+                    });
+
+                    // 监听链变化
+                    window.ethereum.on('chainChanged', (chainId) => {
+                        window.location.reload();
+                    });
+
+                    return true;
+                } catch (error) {
+                    console.error('MetaMask连接失败:', error);
+                    Toast.show('钱包连接失败', 'error');
+                    return false;
+                }
+            },
+
+            // 更新钱包UI
+            updateWalletUI() {
+                const walletBtn = document.querySelector('.wallet-btn');
+                const walletText = walletBtn.querySelector('.wallet-text');
+                
+                if (this.account) {
+                    walletBtn.classList.add('connected');
+                    const shortAddress = `${this.account.slice(0, 6)}...${this.account.slice(-4)}`;
+                    walletText.textContent = shortAddress;
+                } else {
+                    walletBtn.classList.remove('connected');
+                    walletText.textContent = '连接钱包';
+                }
+            },
+
+            // 检查网络
+            async checkNetwork() {
+                const chainId = await this.web3.eth.getChainId();
+                // 这里可以添加支持的链ID
+                const supportedChains = [1, 56, 137]; // ETH, BSC, Polygon
+                return supportedChains.includes(chainId);
+            },
+
+            // 切换网络
+            async switchNetwork(chainId) {
+                try {
+                    await window.ethereum.request({
+                        method: 'wallet_switchEthereumChain',
+                        params: [{ chainId: Web3.utils.toHex(chainId) }],
+                    });
+                    return true;
+                } catch (error) {
+                    console.error('切换网络失败:', error);
+                    return false;
+                }
+            },
+
+            // 断开连接
+            disconnect() {
+                this.account = null;
+                this.solAccount = null;
+                this.web3 = null;
+                localStorage.removeItem('walletConnected');
+                localStorage.removeItem('walletType');
+                this.updateWalletUI();
+                Toast.show('钱包已断开连接', 'info');
+            },
+
+            // 复制地址到剪贴板
+            async copyAddress() {
+                if (this.account) {
+                    try {
+                        await navigator.clipboard.writeText(this.account);
+                        Toast.show('地址已复制到剪贴板', 'success');
+                    } catch (err) {
+                        Toast.show('复制失败', 'error');
+                    }
+                }
+            },
+
+            // 在区块浏览器中查看
+            viewOnExplorer() {
+                if (this.account) {
+                    const explorerUrl = this.getExplorerUrl();
+                    window.open(`${explorerUrl}/address/${this.account}`, '_blank');
+                }
+            },
+
+            // 获取区块浏览器URL
+            getExplorerUrl() {
+                const explorers = {
+                    1: 'https://etherscan.io',
+                    56: 'https://bscscan.com',
+                    137: 'https://polygonscan.com'
+                };
+                return explorers[this.chainId] || explorers[1];
+            },
+
+            // 签名交易
+            async signTransaction(transaction) {
+                if (!this.account) throw new Error('Wallet not connected');
+
+                try {
+                    // 显示交易确认模态框
+                    const confirmed = await this.showTransactionConfirmation(transaction);
+                    if (!confirmed) return null;
+
+                    // 获取gas估算
+                    const gas = await this.web3.eth.estimateGas(transaction);
+                    transaction.gas = gas;
+
+                    // 签名并发送交易
+                    const signedTx = await this.web3.eth.sendTransaction({
+                        ...transaction,
+                        from: this.account
+                    });
+
+                    Toast.show('交易已发送', 'success');
+                    return signedTx;
+                } catch (error) {
+                    Toast.show(error.message, 'error');
+                    return null;
+                }
+            },
+
+            // 显示交易确认模态框
+            showTransactionConfirmation(transaction) {
+                return new Promise((resolve) => {
+                    const modal = document.querySelector('.transaction-modal');
+                    modal.querySelector('.transaction-from .address').textContent = transaction.from;
+                    modal.querySelector('.transaction-to .address').textContent = transaction.to;
+                    modal.querySelector('.transaction-amount .value').textContent = 
+                        `${this.web3.utils.fromWei(transaction.value, 'ether')} ETH`;
+
+                    modal.style.display = 'block';
+                    document.querySelector('.modal-overlay').classList.add('active');
+
+                    modal.querySelector('.confirm-btn').onclick = () => {
+                        modal.style.display = 'none';
+                        document.querySelector('.modal-overlay').classList.remove('active');
+                        resolve(true);
+                    };
+
+                    modal.querySelector('.cancel-btn').onclick = () => {
+                        modal.style.display = 'none';
+                        document.querySelector('.modal-overlay').classList.remove('active');
+                        resolve(false);
+                    };
+                });
+            },
+
+            // 更新钱包UI
+            updateWalletUI() {
+                // ... 现有代码 ...
+                if (this.account) {
+                    // 更新余额显示
+                    this.web3.eth.getBalance(this.account).then(balance => {
+                        const ethBalance = this.web3.utils.fromWei(balance, 'ether');
+                        document.querySelector('.wallet-balance').textContent = `${ethBalance} ETH`;
+                    });
+
+                    // 更新网络显示
+                    const networks = {
+                        1: 'Ethereum',
+                        56: 'BSC',
+                        137: 'Polygon'
+                    };
+                    document.querySelector('.wallet-network').textContent = 
+                        `Network: ${networks[this.chainId] || 'Unknown'}`;
+                }
+            },
+
+            // 连接 Phantom 钱包 (Solana)
+            async connectPhantom() {
+                try {
+                    if (!window.solana || !window.solana.isPhantom) {
+                        window.open('https://phantom.app/', '_blank');
+                        throw new Error('请先安装 Phantom 钱包');
+                    }
+
+                    const resp = await window.solana.connect();
+                    this.solAccount = resp.publicKey.toString();
+                    this.updateWalletUI('sol');
+                    Toast.show('Phantom 钱包连接成功', 'success');
+                    return true;
+                } catch (error) {
+                    console.error('Phantom 连接失败:', error);
+                    Toast.show(error.message, 'error');
+                    return false;
+                }
+            },
+
+            // 连接 Telegram 钱包
+            async connectTelegram() {
+                try {
+                    if (!window.Telegram?.WebApp) {
+                        throw new Error('请在 Telegram 中打开');
+                    }
+
+                    // 使用 Telegram Wallet API
+                    const tgWallet = window.Telegram.WebApp.MainButton;
+                    if (tgWallet) {
+                        // 这里添加 Telegram 钱包具体的连接逻辑
+                        Toast.show('Telegram 钱包连接成功', 'success');
+                        return true;
+                    }
+                    throw new Error('未找到 Telegram 钱包');
+                } catch (error) {
+                    console.error('Telegram 钱包连接失败:', error);
+                    Toast.show(error.message, 'error');
+                    return false;
+                }
+            },
+
+            // 更新钱包UI
+            updateWalletUI(walletType = 'eth') {
+                const walletBtn = document.querySelector('.wallet-btn');
+                const walletText = walletBtn.querySelector('.wallet-text');
+                const walletBalance = document.querySelector('.wallet-balance');
+                const walletNetwork = document.querySelector('.wallet-network');
+                const walletDropdown = document.querySelector('.wallet-dropdown');
+                
+                if (this.account || this.solAccount) {
+                    walletBtn.classList.add('connected');
+                    let displayAddress, networkName;
+
+                    if (walletType === 'sol' && this.solAccount) {
+                        displayAddress = `${this.solAccount.slice(0, 4)}...${this.solAccount.slice(-4)}`;
+                        networkName = 'Solana';
+                        // 获取 SOL 余额
+                        this.getPhantomBalance().then(balance => {
+                            walletBalance.textContent = `${balance} SOL`;
+                        });
+                    } else if (this.account) {
+                        displayAddress = `${this.account.slice(0, 4)}...${this.account.slice(-4)}`;
+                        networkName = this.networks[this.chainId] || 'Unknown';
+                        // 获取 ETH 余额
+                        this.web3.eth.getBalance(this.account).then(balance => {
+                            const ethBalance = this.web3.utils.fromWei(balance, 'ether');
+                            walletBalance.textContent = `${ethBalance} ETH`;
+                        });
+                    }
+
+                    walletText.textContent = displayAddress;
+                    walletNetwork.textContent = `Network: ${networkName}`;
+                    
+                    // 启用下拉菜单的悬停效果
+                    walletDropdown.style.pointerEvents = 'auto';
+                } else {
+                    walletBtn.classList.remove('connected');
+                    walletText.textContent = '连接钱包';
+                    walletBalance.textContent = '0';
+                    walletNetwork.textContent = 'Network: -';
+                    
+                    // 禁用下拉菜单的悬停效果
+                    walletDropdown.style.pointerEvents = 'none';
+                    walletDropdown.style.display = 'none';
+                    walletDropdown.style.opacity = '0';
+                    walletDropdown.style.visibility = 'hidden';
+                }
+            },
+
+            // 获取 Phantom 钱包余额
+            async getPhantomBalance() {
+                try {
+                    if (window.solana && this.solAccount) {
+                        const balance = await window.solana.connection.getBalance(
+                            new window.solana.PublicKey(this.solAccount)
+                        );
+                        return (balance / 1e9).toFixed(4); // Convert lamports to SOL
+                    }
+                    return '0';
+                } catch (error) {
+                    console.error('获取 SOL 余额失败:', error);
+                    return '0';
+                }
+            },
+
+            // ... 其他现有代码 ...
+
+            // 添加切换钱包方法
+            switchWallet() {
+                this.disconnect();
+                const walletModal = document.querySelector('.wallet-modal');
+                const modalOverlay = document.querySelector('.modal-overlay');
+                walletModal.classList.add('active');
+                modalOverlay.classList.add('active');
+            }
+        };
+
+        // 初始化钱包功能
+        document.addEventListener('DOMContentLoaded', async () => {
+            const walletBtn = document.querySelector('.wallet-btn');
+            const walletModal = document.querySelector('.wallet-modal');
+            const modalOverlay = document.querySelector('.modal-overlay');
+            const walletOptions = document.querySelectorAll('.wallet-option');
+
+            // 初始化Web3
+            const isWeb3Available = await WalletService.init();
+            
+            // 检查是否已经连接
+            if (isWeb3Available) {
+                const savedWalletType = localStorage.getItem('walletType');
+                if (savedWalletType) {
+                    await WalletService.connectWallet(savedWalletType);
+                }
+            }
+
+            // 钱包按钮点击事件
+            walletBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (!WalletService.account && !WalletService.solAccount) {
+                    walletModal.classList.add('active');
+                    modalOverlay.classList.add('active');
+                }
+            });
+
+            // 关闭模态框
+            modalOverlay.addEventListener('click', () => {
+                walletModal.classList.remove('active');
+                modalOverlay.classList.remove('active');
+            });
+
+            // 钱包选项点击事件
+            walletOptions.forEach(option => {
+                option.addEventListener('click', async () => {
+                    const walletType = option.getAttribute('data-wallet');
+                    const connected = await WalletService.connectWallet(walletType);
+                    
+                    if (connected) {
+                        localStorage.setItem('walletConnected', 'true');
+                        localStorage.setItem('walletType', walletType);
+                        document.querySelector('.wallet-modal').classList.remove('active');
+                        document.querySelector('.modal-overlay').classList.remove('active');
+                    }
+                });
+            });
+        });
+
+        // 断开连接按钮
+        document.querySelector('.disconnect').addEventListener('click', () => {
+            WalletService.disconnect();
+        });
+
+        // 复制地址按钮
+        document.querySelector('.copy-address').addEventListener('click', () => {
+            WalletService.copyAddress();
+        });
+
+        // 查看浏览器按钮
+        document.querySelector('.view-on-explorer').addEventListener('click', () => {
+            WalletService.viewOnExplorer();
+        });
+
+        // 切换钱包按钮
+        document.querySelector('.switch-wallet').addEventListener('click', () => {
+            WalletService.switchWallet();
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const walletWrapper = document.querySelector('.wallet-btn-wrapper');
+            const walletDropdown = document.querySelector('.wallet-dropdown');
+            let timeoutId = null;
+
+            // 鼠标进入钱包按钮区域
+            walletWrapper.addEventListener('mouseenter', () => {
+                // 只有在钱包已连接的情况下才显示下拉菜单
+                if (WalletService.account || WalletService.solAccount) {
+                    if (timeoutId) {
+                        clearTimeout(timeoutId);
+                        timeoutId = null;
+                    }
+                    walletDropdown.style.display = 'block';
+                    requestAnimationFrame(() => {
+                        walletDropdown.style.opacity = '1';
+                        walletDropdown.style.visibility = 'visible';
+                    });
+                }
+            });
+
+            // 鼠标离开整个区域
+            walletWrapper.addEventListener('mouseleave', (e) => {
+                // 检查是否真的离开了整个区域（包括下拉菜单）
+                const toElement = e.relatedTarget;
+                if (!walletWrapper.contains(toElement)) {
+                    timeoutId = setTimeout(() => {
+                        walletDropdown.style.opacity = '0';
+                        walletDropdown.style.visibility = 'hidden';
+                        // 等待过渡效果完成后再隐藏元素
+                        setTimeout(() => {
+                            if (walletDropdown.style.opacity === '0') {
+                                walletDropdown.style.display = 'none';
+                            }
+                        }, 300);
+                    }, 200); // 增加延迟时间
+                }
+            });
+
+            // 鼠标进入下拉菜单时清除关闭计时器
+            walletDropdown.addEventListener('mouseenter', () => {
+                if (timeoutId) {
+                    clearTimeout(timeoutId);
+                    timeoutId = null;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
